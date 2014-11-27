@@ -14,6 +14,6 @@ print "meap smtp server running on port %d" % PORT
 
 while True:
     s.listen(1)
-    con, addr = s.accept()
-    print "Connected by Client: " + str(addr)
-    Communicator(con).start()
+    com, addr = s.accept()
+    print "Connected with client: " + str(addr)
+    Communicator(com).start()   # start thread for client communication
