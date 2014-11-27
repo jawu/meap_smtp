@@ -71,7 +71,7 @@ class Communicator(Thread):
                 self.com_send("221 OK I will close the connection. Have a nice day!\r\n")
                 sleep(0.5)
                 self.com.close()
-                break
+                return
 
             if command == "mail":
                 if self.smtp_state == "helo":
