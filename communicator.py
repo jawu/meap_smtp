@@ -9,6 +9,15 @@ class Communicator(Thread):
 
     #this list contains all implemented smtp commands
     smtp_commands = ["helo", "mail", "rcpt", "data", "quit", "help"]
+    codes = {
+            "220": "220 Welcome to meap - mailing easy as pie - smtp server! Service ready.\r\n",
+            "221": "221 OK I will close the connection. Have a nice day!\r\n",
+            "250": "250 OK I received the email.\r\n",
+            "354": "354 Send the mail data and terminate with <CRLF>.<CRLF>\r\n",
+            "500": "500 Syntax error, I don't know that command.\r\n",
+            "501": "501 Syntax error in the parameter.\r\n",
+            "503": "503 Wrong sequence of commands.\r\n",
+        }
 
     def __init__(self, com):
         Thread.__init__(self)
@@ -26,7 +35,7 @@ class Communicator(Thread):
         this method handles the whole communication with the client
         """
         try:
-            self.com_send("220 Welcome to meap - mailing easy as pie - smtp server! Service ready.\r\n")
+            self.com_send(self.codes['220'])
             while True:
                 if self.smtp_state == "data":
                     self.email = self.com.recv(512)
@@ -38,7 +47,7 @@ class Communicator(Thread):
                         self.com_send("501 Error in email header.\r\n")
                         self.smtp_state = "rcpt"
                         continue
-                    self.com_send("250 OK I received the email.\r\n")
+                    self.com_send(self.codes["250"])
                     self.store_email()
                     # clean up
                     self.smtp_state = "helo"
@@ -51,7 +60,7 @@ class Communicator(Thread):
 
                 command = self.check_command(data)
                 if not command:
-                    self.com_send("500 Syntax error, I don't know that command.\r\n")
+                    self.com_send(self.codes["500"])
                     continue
 
                 param = None
@@ -74,7 +83,7 @@ class Communicator(Thread):
                     continue
 
                 if command == "quit":
-                    self.com_send("221 OK I will close the connection. Have a nice day!\r\n")
+                    self.com_send(self.codes["221"])
                     sleep(0.5)
                     self.com.close()
                     return
@@ -89,13 +98,13 @@ class Communicator(Thread):
                                 self.smtp_state = "mail"
                                 continue
                             else:
-                                self.com_send("501 Syntax error in the parameter.\r\n")
+                                self.com_send(self.codes["501"])
                                 continue
                         else:
-                            self.com_send("501 Syntax error in the parameter.\r\n")
+                            self.com_send(self.codes["501"])
                             continue
                     else:
-                        self.com_send("503 Wrong sequence of commands.\r\n")
+                        self.com_send(self.codes["503"])
                         continue
 
                 if command == "rcpt":
@@ -108,22 +117,22 @@ class Communicator(Thread):
                                 self.smtp_state = "rcpt"
                                 continue
                             else:
-                                self.com_send("501 Syntax error in the parameter.\r\n")
+                                self.com_send(self.codes["501"])
                                 continue
                         else:
-                            self.com_send("501 Syntax error in the parameter.\r\n")
+                            self.com_send(self.codes["501"])
                             continue
                     else:
-                        self.com_send("503 Wrong sequence of commands.\r\n")
+                        self.com_send(self.codes["503"])
                         continue
 
                 if command == "data":
                     if self.smtp_state == "rcpt":
-                        self.com_send("354 Send the mail data and terminate with <CRLF>.<CRLF>\r\n")
+                        self.com_send(self.codes["354"])
                         self.smtp_state = "data"
                         continue
                     else:
-                        self.com_send("503 Wrong sequence of commands.\r\n")
+                        self.com_send(self.codes["503"])
                         continue
 
         except socket_error:
