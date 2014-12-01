@@ -17,7 +17,7 @@ class Communicator(Thread):
             "500": "500 Syntax error, I don't know that command.\r\n",
             "501": "501 Syntax error in the parameter.\r\n",
             "503": "503 Wrong sequence of commands.\r\n",
-        }
+            }
 
     def __init__(self, com):
         Thread.__init__(self)
@@ -137,6 +137,7 @@ class Communicator(Thread):
 
         except socket_error:
             print("Lost connection to the client.")
+            return
 
     def get_data(self):
         """
@@ -198,7 +199,7 @@ class Communicator(Thread):
 
     def store_email(self):
         """
-        stores the email in an text file with the name [receiver]-emails.txt
+        stores the email in a text file with the name [receiver]-emails.txt
         """
         for receiver in self.receiver:
             f = open(receiver + "-emails.txt", 'a')
