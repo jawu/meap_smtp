@@ -38,7 +38,7 @@ class Communicator(Thread):
             self.com_send(self.codes['220'])
             while True:
                 if self.smtp_state == "data":
-                    self.email = self.com.recv(512)
+                    self.email = self.com.recv(512).decode("utf-8")
                     while not "\r\n.\r\n" in self.email:
                         self.email += self.com.recv(512)
                     print ("Received: %s " % repr(self.email)[1:-1])
@@ -144,7 +144,7 @@ class Communicator(Thread):
         reads the data from the socket and removes control symbols
         :return: the received data
         """
-        data = self.com.recv(512)
+        data = self.com.recv(512).decode("utf-8")
         if not data.endswith('\r\n'):
             data += self.com.recv(512)
         print ("Received: %s " % repr(data)[1:-1])
@@ -157,7 +157,7 @@ class Communicator(Thread):
         :param reply: the response
         """
         print("Response: " + response)
-        self.com.send(response)
+        self.com.send(bytes(response, "utf-8"))
 
     def check_command(self, message):
         """

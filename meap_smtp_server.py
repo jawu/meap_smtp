@@ -10,10 +10,10 @@ if len(sys.argv) == 2:
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
 
-print "meap smtp server running on port %d" % PORT
+print("meap smtp server running on port %d" % PORT)
 
 while True:
     s.listen(1)
     com, addr = s.accept()
-    print "Connected with client: " + str(addr)
+    print("Connected with client: " + str(addr))
     Communicator(com).start()   # start thread for client communication
